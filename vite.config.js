@@ -8,10 +8,12 @@ export default defineConfig({
     rollupOptions: {
       external: ['electron'],
     },
+    outDir: 'dist', // مسیر خروجی
   },
   resolve: {
     alias: {
       path: 'path-browserify',
     },
   },
+  base: './', // اضافه کردن مسیر نسبی
 })
