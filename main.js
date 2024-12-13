@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -16,13 +16,32 @@ app.on("ready", () => {
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
-      nodeIntegration: true,
+      nodeIntegration: false,
+      contextIsolation: true,
+      enableRemoteModule: false,
     },
   });
 
   if (isDev) mainWindow.loadURL("http://localhost:5173");
   else mainWindow.loadFile(path.join(__dirname, "dist/index.html"));
   // mainWindow.webContents.openDevTools();
+
+  // مدیریت پیام‌های کنترلی
+  ipcMain.on("minimize-window", () => {
+    mainWindow.minimize();
+  });
+
+  ipcMain.on("maximize-window", () => {
+    if (mainWindow.isMaximized()) {
+      mainWindow.unmaximize();
+    } else {
+      mainWindow.maximize();
+    }
+  });
+
+  ipcMain.on("close-window", () => {
+    mainWindow.close();
+  });
 });
 
 app.on("window-all-closed", () => {
